@@ -1,16 +1,39 @@
-## Hi there 👋
+# Hi there 👋
 
-<!--
-**monanyx/monanyx** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+I'm Monanyx, a developer passionate about algorithms and simulations.
 
-Here are some ideas to get you started:
+## 🚀 Featured Project
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+### Conway's Game of Life
+
+A terminal-based implementation of Conway's Game of Life in Node.js.
+
+**Tech Stack:** JavaScript, Node.js
+
+**Features:**
+- Random initial population
+- Real-time animation in terminal
+- Uses the `dat-life` library for game logic
+
+**Run it:**
+```bash
+git clone https://github.com/monanyx/monanyx.git
+cd monanyx
+npm install
+npm start
+```
+
+## 🔭 Currently Exploring
+
+- Cellular automata
+- Terminal-based applications
+- Algorithm visualizations
+
+## 📫 Get in Touch
+
+Feel free to reach out for collaborations or discussions!
+
+---
+
+*This README is automatically updated. Last updated: March 2026*
+
