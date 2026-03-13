@@ -1,6 +1,6 @@
 # Hi there 👋
 
-I'm Monanyx, a developer passionate about algorithms and simulations.
+I'm Melissa also known as Mona lol, a developer passionate about algorithms and simulations.
 
 ## 🚀 Featured Project
 
