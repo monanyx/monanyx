@@ -8,7 +8,7 @@ I'm Melissa also known as Mona lol, a developer passionate about algorithms and 
 
 A terminal-based implementation of Conway's Game of Life in Node.js.
 
-**Tech Stack:** JavaScript, Node.js
+**Tech Stack:** JavaScript, Node.js, Python, Ruby, Java, C#
 
 **Features:**
 - Random initial population
