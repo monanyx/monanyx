@@ -1,7 +1,7 @@
 <!-- GENERATED FILE. Edit scripts/README.template.md instead. -->
 <div align="center">
 
-<a href="https://monanyx.github.io/monanyx/lab/"><img src="ecosystem/world.svg?e=1350" width="100%" alt="MONANYX: a live artificial-life ecosystem. Organisms forage, reproduce, mutate and get hunted."></a>
+<a href="https://monanyx.github.io/monanyx/lab/"><img src="ecosystem/world.svg?e=1500" width="100%" alt="MONANYX: a live artificial-life ecosystem. Organisms forage, reproduce, mutate and get hunted."></a>
 
 **This is not a GIF.** It's a real artificial-life simulation. Every dot carries a genome (speed, sensing range, body size, colour) that it passes on with mutations.
 The world lives in this repository, evolves on its own every day, and **reacts when you touch it.**
@@ -21,9 +21,9 @@ Pick one. You'll land on a pre-filled issue: press **Create**, and within about 
 
 | Lineage | Founded by | Alive | Peak | Status |
 |:--|:--|--:|--:|:--|
-| 🧫 **Aurora** | <sub>primordial</sub> | 47 | 49 | 🟢 dominant |
-| 🧫 **Ember** | <sub>primordial</sub> | 43 | 61 | 🟢 dominant |
-| 🧫 **Cobalt** | <sub>primordial</sub> | 32 | 42 | 🟢 dominant |
+| 🧫 **Aurora** | <sub>primordial</sub> | 50 | 50 | 🟢 dominant |
+| 🧫 **Ember** | <sub>primordial</sub> | 49 | 61 | 🟢 dominant |
+| 🧫 **Cobalt** | <sub>primordial</sub> | 45 | 45 | 🟢 dominant |
 
 ### ◈ EVOLUTION SO FAR
 
@@ -31,13 +31,13 @@ Nobody programmed these trends. They come out of selection pressure: predators, 
 
 | Trait | Epoch 1 | Now | Drift |
 |:--|--:|--:|--:|
-| Speed | 1.61 | 1.65 | +3% |
-| Sensing range | 58 | 58 | -1% |
-| Body size | 3.85 | 3.82 | -1% |
+| Speed | 1.61 | 1.68 | +5% |
+| Sensing range | 58 | 58 | +1% |
+| Body size | 3.85 | 3.81 | -1% |
 
 ### ◈ EVENT LOG
 
-_Nobody has touched the world yet. Be the first._
+`E004` 🌸 [@monanyx](https://github.com/monanyx) triggered a bloom
 
 ---
 
