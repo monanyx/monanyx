@@ -1,7 +1,7 @@
 <!-- GENERATED FILE. Edit scripts/README.template.md instead. -->
 <div align="center">
 
-<a href="https://monanyx.github.io/monanyx/lab/"><img src="ecosystem/world.svg?e=1650" width="100%" alt="MONANYX: a live artificial-life ecosystem. Organisms forage, reproduce, mutate and get hunted."></a>
+<a href="https://monanyx.github.io/monanyx/lab/"><img src="ecosystem/world.svg?e=1800" width="100%" alt="MONANYX: a live artificial-life ecosystem. Organisms forage, reproduce, mutate and get hunted."></a>
 
 **This is not a GIF.** It's a real artificial-life simulation. Every dot carries a genome (speed, sensing range, body size, colour) that it passes on with mutations.
 The world lives in this repository, evolves on its own every day, and **reacts when you touch it.**
@@ -21,9 +21,10 @@ Pick one. You'll land on a pre-filled issue: press **Create**, and within about 
 
 | Lineage | Founded by | Alive | Peak | Status |
 |:--|:--|--:|--:|:--|
-| 🧫 **Ember** | <sub>primordial</sub> | 49 | 61 | 🟢 dominant |
-| 🧫 **Cobalt** | <sub>primordial</sub> | 48 | 49 | 🟢 dominant |
-| 🧫 **Aurora** | <sub>primordial</sub> | 44 | 50 | 🟢 dominant |
+| 🧫 **Ember** | <sub>primordial</sub> | 58 | 61 | 🟢 dominant |
+| 🧫 **Aurora** | <sub>primordial</sub> | 52 | 52 | 🟢 dominant |
+| 🧫 **Cobalt** | <sub>primordial</sub> | 47 | 51 | 🟢 dominant |
+| 🧫 **monanyx** | [@monanyx](https://github.com/monanyx) | 13 | 13 | 🟡 holding on |
 
 ### ◈ EVOLUTION SO FAR
 
@@ -31,12 +32,13 @@ Nobody programmed these trends. They come out of selection pressure: predators, 
 
 | Trait | Epoch 1 | Now | Drift |
 |:--|--:|--:|--:|
-| Speed | 1.61 | 1.73 | +7% |
-| Sensing range | 58 | 59 | +1% |
-| Body size | 3.85 | 3.81 | -1% |
+| Speed | 1.61 | 1.70 | +6% |
+| Sensing range | 58 | 57 | -2% |
+| Body size | 3.85 | 3.82 | -1% |
 
 ### ◈ EVENT LOG
 
+`E006` 🧪 [@monanyx](https://github.com/monanyx) seeded a new species  
 `E005` ☄️ [@monanyx](https://github.com/monanyx) meteor impact, 22 organisms lost  
 `E004` 🌸 [@monanyx](https://github.com/monanyx) triggered a bloom
 
