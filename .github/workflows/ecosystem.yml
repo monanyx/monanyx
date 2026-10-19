@@ -1,0 +1,54 @@
+name: ecosystem
+
+on:
+  issues:
+    types: [opened]
+  schedule:
+    - cron: "17 6 * * *"   # time passes once a day
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: ecosystem
+  cancel-in-progress: false
+
+jobs:
+  evolve:
+    if: github.event_name != 'issues' || startsWith(github.event.issue.title, 'ecosystem|')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run one epoch
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_USER: ${{ github.event.issue.user.login }}
+          REPLY_FILE: ${{ runner.temp }}/reply.md
+        run: node scripts/evolve.mjs
+
+      - name: Commit the new world
+        env:
+          WHO: ${{ github.event.issue.user.login || 'time' }}
+        run: |
+          git config user.name "monanyx-ecosystem"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && exit 0
+          git commit -m "epoch: $(node -p "require('./ecosystem/state.json').epoch") · ${WHO}"
+          git pull --rebase
+          git push
+
+      - name: Report back and close the issue
+        if: github.event_name == 'issues'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NUMBER: ${{ github.event.issue.number }}
+        run: |
+          gh issue close "$NUMBER" --repo "$GITHUB_REPOSITORY" --comment "$(cat "$RUNNER_TEMP/reply.md")"

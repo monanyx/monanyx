@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MONANYX Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: an instrument console. Live specimen chamber on the left, readouts and controls racked on the right; stacks on phones. */
+:root {
+  --void: #04070b;        /* page */
+  --chamber: #070d12;     /* simulation surface */
+  --panel: #0a1218;       /* racked modules */
+  --line: #15303a;        /* module edges, grid */
+  --ink: #d3ece2;         /* primary text */
+  --dim: #6c8794;         /* labels */
+  --life: #3dffa2;        /* prey, accent */
+  --apex: #ff3d9a;        /* predators */
+  --warn: #ffb347;        /* catastrophes */
+  --display: "Chakra Petch", "Eurostile", "Bank Gothic", ui-sans-serif, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { min-height: 100%; }
+body {
+  margin: 0; background: var(--void); color: var(--ink);
+  font: 13px/1.5 var(--mono);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 18px 28px;
+}
+.wrap { max-width: 1320px; margin: 0 auto; display: grid; gap: 14px; }
+
+header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 20px; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.pulse { width: 9px; height: 9px; border-radius: 50%; background: var(--life); box-shadow: 0 0 0 0 var(--life); animation: pulse 1.6s infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(61,255,162,.6); } 100% { box-shadow: 0 0 0 12px rgba(61,255,162,0); } }
+h1 { font: 700 22px/1 var(--display); letter-spacing: .32em; margin: 0; }
+h1 span { color: var(--life); }
+.sub { color: var(--dim); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; }
+.motto { color: var(--life); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 14px; align-items: start; }
+@media (max-width: 900px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+
+.chamber { position: relative; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--chamber); }
+canvas#world { display: block; width: 100%; height: auto; aspect-ratio: 900 / 400; max-width: 100%; cursor: crosshair; }
+.hud { position: absolute; left: 12px; top: 10px; display: flex; gap: 16px; flex-wrap: wrap; pointer-events: none; font-size: 10.5px; letter-spacing: .14em; color: var(--dim); text-transform: uppercase; }
+.hud b { color: var(--ink); font-weight: 600; }
+.hint { position: absolute; right: 12px; bottom: 9px; font-size: 10.5px; color: var(--dim); letter-spacing: .08em; pointer-events: none; }
+.tip { position: absolute; pointer-events: none; background: rgba(4,7,11,.92); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; font-size: 11px; line-height: 1.55; min-width: 160px; transform: translate(14px, 14px); }
+.tip .t { font: 700 12px var(--display); letter-spacing: .12em; margin-bottom: 4px; }
+.tip dl { display: grid; grid-template-columns: auto auto; gap: 0 14px; margin: 0; }
+.tip dt { color: var(--dim); } .tip dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+
+.ticker { display: flex; gap: 10px; align-items: center; border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; background: var(--panel); font-size: 11.5px; min-height: 40px; overflow: hidden; }
+.ticker .lbl { color: var(--dim); letter-spacing: .14em; font-size: 10px; flex: none; }
+.ticker #events { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+aside { display: grid; gap: 12px; min-width: 0; }
+.mod { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 10px; min-width: 0; }
+.mod h2 { margin: 0; font: 700 11px var(--display); letter-spacing: .26em; color: var(--dim); text-transform: uppercase; display: flex; justify-content: space-between; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px 10px; }
+.stat .k { font-size: 9.5px; letter-spacing: .16em; color: var(--dim); text-transform: uppercase; }
+.stat .v { font: 600 20px/1.1 var(--mono); font-variant-numeric: tabular-nums; }
+.stat.apex .v { color: var(--apex); }
+canvas.chart { width: 100%; height: 74px; display: block; }
+.legend { display: flex; gap: 12px; font-size: 10px; color: var(--dim); letter-spacing: .1em; }
+.legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; vertical-align: 0; }
+
+.acts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 7px; }
+button { font: 500 12px var(--mono); color: var(--ink); background: transparent; border: 1px solid var(--line); border-radius: 7px; padding: 8px 9px; cursor: pointer; text-align: left; display: flex; gap: 8px; align-items: center; transition: border-color .15s, background .15s; }
+button:hover { border-color: var(--life); background: rgba(61,255,162,.06); }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--life); outline-offset: 2px; }
+button.danger:hover { border-color: var(--warn); background: rgba(255,179,71,.07); }
+button.apex:hover { border-color: var(--apex); background: rgba(255,61,154,.07); }
+.row { display: flex; gap: 7px; flex-wrap: wrap; }
+.row button { flex: 1; justify-content: center; }
+button[aria-pressed="true"] { border-color: var(--life); color: var(--life); }
+
+label.sl { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; font-size: 11px; color: var(--dim); letter-spacing: .06em; }
+label.sl output { color: var(--ink); font-variant-numeric: tabular-nums; }
+label.sl input { grid-column: 1 / -1; width: 100%; accent-color: var(--life); }
+.handle { display: flex; gap: 8px; align-items: center; font-size: 11px; color: var(--dim); }
+.handle input { flex: 1; min-width: 0; background: var(--chamber); border: 1px solid var(--line); border-radius: 6px; color: var(--ink); font: 12px var(--mono); padding: 6px 8px; }
+
+.lin { display: grid; gap: 5px; font-size: 11.5px; }
+.lin div { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 8px; align-items: center; }
+.lin span.n { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lin b { font-weight: 500; font-variant-numeric: tabular-nums; }
+.lin i { width: 9px; height: 9px; border-radius: 50%; }
+.lin .dead { opacity: .4; }
+footer { color: var(--dim); font-size: 11px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; }
+footer a { color: var(--life); }
+@media (prefers-reduced-motion: reduce) { .pulse { animation: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand"><div class="pulse"></div><h1>MONANYX <span>LAB</span></h1></div>
+    <div class="sub" id="origin">Loading the live world…</div>
+    <div class="motto">Never send an organic to do a machine's work.</div>
+  </header>
+
+  <div class="grid">
+    <div style="display:grid;gap:12px;min-width:0">
+      <div class="chamber" id="chamber">
+        <canvas id="world" width="1800" height="800" aria-label="Live artificial-life simulation"></canvas>
+        <div class="hud"><span>Tick <b id="h-tick">0</b></span><span>Fertility <b id="h-fert">1.00</b></span><span>Mutation <b id="h-mut">12%</b></span><span>Food <b id="h-food">0</b></span></div>
+        <div class="hint">Click to drop food · hover to inspect · space to pause</div>
+        <div class="tip" id="tip" hidden></div>
+      </div>
+      <div class="ticker"><span class="lbl">EVENTS</span><span id="events">The world is running.</span></div>
+    </div>
+
+    <aside>
+      <section class="mod">
+        <h2>Readout <span id="h-epoch"></span></h2>
+        <div class="stats">
+          <div class="stat"><div class="k">Prey</div><div class="v" id="s-herb">0</div></div>
+          <div class="stat apex"><div class="k">Predators</div><div class="v" id="s-pred">0</div></div>
+          <div class="stat"><div class="k">Lineages</div><div class="v" id="s-lin">0</div></div>
+          <div class="stat"><div class="k">Speed</div><div class="v" id="s-speed">0</div></div>
+          <div class="stat"><div class="k">Sense</div><div class="v" id="s-sense">0</div></div>
+          <div class="stat"><div class="k">Size</div><div class="v" id="s-size">0</div></div>
+        </div>
+        <canvas class="chart" id="chart" width="600" height="148"></canvas>
+        <div class="legend"><span><i style="background:var(--life)"></i>Prey</span><span><i style="background:var(--apex)"></i>Predators ×4</span><span><i style="background:var(--warn)"></i>Avg speed</span></div>
+      </section>
+
+      <section class="mod">
+        <h2>Intervene</h2>
+        <div class="handle"><label for="who">Your handle</label><input id="who" value="visitor" maxlength="39" autocomplete="off"></div>
+        <div class="acts" id="acts"></div>
+      </section>
+
+      <section class="mod">
+        <h2>Climate &amp; time</h2>
+        <label class="sl">Base fertility <output id="o-fert">1.00</output><input type="range" id="fert" min="0.2" max="2.5" step="0.05" value="1"></label>
+        <label class="sl">Base mutation rate <output id="o-mut">12%</output><input type="range" id="mut" min="0" max="0.6" step="0.01" value="0.12"></label>
+        <div class="row" id="speeds"></div>
+        <div class="row"><button id="pause">Pause</button><button id="reset">Reload live world</button></div>
+      </section>
+
+      <section class="mod">
+        <h2>Lineages</h2>
+        <div class="lin" id="lin"></div>
+      </section>
+    </aside>
+  </div>
+
+  <footer><span>Same engine as the profile. Nothing you do here touches the real world. That takes an issue on <a href="https://github.com/monanyx" target="_blank" rel="noopener">github.com/monanyx</a>.</span><span id="fps"></span></footer>
+</div>
+
+<script type="module">
+import * as S from "../ecosystem/sim.mjs";
+const LIVE_STATE_URL = "../ecosystem/state.json";
+
+const $ = (id) => document.getElementById(id);
+const cv = $("world"), ctx = cv.getContext("2d");
+const SCALE = cv.width / S.W;
+const ch = $("chart"), cx2 = ch.getContext("2d");
+
+let w, live, paused = false, speed = 2, series = [], hover = null, events = [];
+
+async function loadLive() {
+  if (window.__MONANYX_STATE__) return structuredClone(window.__MONANYX_STATE__);
+  try { const r = await fetch(LIVE_STATE_URL, { cache: "no-store" }); if (r.ok) return await r.json(); } catch {}
+  return null;
+}
+async function boot() {
+  live = await loadLive();
+  w = live ? structuredClone(live) : S.createWorld(20261019);
+  $("origin").textContent = live ? `Forked from the live world · epoch ${w.epoch}` : "Fresh world · live state unavailable";
+  w.climate.base = +$("fert").value; w.climate.mbase = +$("mut").value;
+  series = [];
+  events = [];
+  const last = w.log?.find((l) => l.user);
+  say(last ? `Live world, last touched by @${last.user}: ${last.note}.` : "Live world loaded.");
+  ctx.fillStyle = "#070d12"; ctx.fillRect(0, 0, cv.width, cv.height);
+}
+
+function say(t) { events.unshift(t); events = events.slice(0, 6); $("events").textContent = events[0]; }
+
+// ---- controls ----
+for (const [k, A] of Object.entries(S.ACTIONS)) {
+  const b = document.createElement("button");
+  b.id = "act-" + k;
+  b.className = k === "meteor" || k === "drought" ? "danger" : k === "predators" ? "apex" : "";
+  b.title = A.blurb;
+  b.innerHTML = `<span aria-hidden="true">${A.icon}</span>${A.label}`;
+  b.onclick = () => {
+    const who = ($("who").value || "visitor").replace(/[^A-Za-z0-9-]/g, "") || "visitor";
+    const note = S.applyAction(w, k, who);
+    say(`@${who} → ${A.label.toLowerCase()}: ${note}.`);
+    if (w.event?.x != null) pings.push({ x: w.event.x, y: w.event.y, r: w.event.r || 70, t: 0, c: k === "meteor" ? "#ffb347" : k === "predators" ? "#ff3d9a" : "#3dffa2" });
+  };
+  $("acts").append(b);
+}
+for (const n of [1, 2, 4, 8]) {
+  const b = document.createElement("button");
+  b.id = "spd-" + n; b.textContent = n + "×"; b.setAttribute("aria-pressed", String(n === speed));
+  b.onclick = () => { speed = n; document.querySelectorAll("#speeds button").forEach((x) => x.setAttribute("aria-pressed", String(x === b))); };
+  $("speeds").append(b);
+}
+$("fert").oninput = (e) => { w.climate.base = +e.target.value; $("o-fert").textContent = (+e.target.value).toFixed(2); };
+$("mut").oninput = (e) => { w.climate.mbase = +e.target.value; $("o-mut").textContent = Math.round(e.target.value * 100) + "%"; };
+$("pause").onclick = togglePause;
+$("reset").onclick = () => boot();
+addEventListener("keydown", (e) => { if (e.code === "Space" && e.target.tagName !== "INPUT") { e.preventDefault(); togglePause(); } });
+function togglePause() { paused = !paused; $("pause").textContent = paused ? "Resume" : "Pause"; $("pause").setAttribute("aria-pressed", String(paused)); }
+
+const pings = [];
+function toWorld(e) {
+  const r = cv.getBoundingClientRect();
+  return { x: (e.clientX - r.left) / r.width * S.W, y: (e.clientY - r.top) / r.height * S.H, px: e.clientX - r.left, py: e.clientY - r.top };
+}
+cv.addEventListener("click", (e) => {
+  const p = toWorld(e);
+  for (let i = 0; i < 18; i++) S.addFood(w, p.x + (Math.random() - .5) * 50, p.y + (Math.random() - .5) * 50);
+  pings.push({ x: p.x, y: p.y, r: 32, t: 0, c: "#b9ff6e" });
+});
+cv.addEventListener("mousemove", (e) => { hover = toWorld(e); });
+cv.addEventListener("mouseleave", () => { hover = null; $("tip").hidden = true; });
+
+// ---- render ----
+const hsl = (h, s, l, a = 1) => `hsla(${h.toFixed(0)},${s}%,${l}%,${a})`;
+function draw() {
+  // trails: fade the previous frame instead of clearing it
+  ctx.globalCompositeOperation = "source-over";
+  ctx.fillStyle = "rgba(7,13,18,0.32)";
+  ctx.fillRect(0, 0, cv.width, cv.height);
+
+  ctx.strokeStyle = "rgba(21,48,58,0.35)"; ctx.lineWidth = 1; ctx.beginPath();
+  for (let x = 0; x <= S.W; x += 45) { ctx.moveTo(x * SCALE, 0); ctx.lineTo(x * SCALE, cv.height); }
+  for (let y = 0; y <= S.H; y += 40) { ctx.moveTo(0, y * SCALE); ctx.lineTo(cv.width, y * SCALE); }
+  ctx.stroke();
+
+  ctx.fillStyle = "rgba(185,255,110,0.75)";
+  for (const f of w.food) { ctx.beginPath(); ctx.arc(f.x * SCALE, f.y * SCALE, 1.7 * SCALE, 0, 6.283); ctx.fill(); }
+
+  ctx.globalCompositeOperation = "lighter";
+  for (const o of w.organisms) {
+    const x = o.x * SCALE, y = o.y * SCALE, r = o.g.size * 1.05 * SCALE;
+    ctx.fillStyle = hsl(o.g.hue, 95, 60, 0.16);
+    ctx.beginPath(); ctx.arc(x, y, r * 2.4, 0, 6.283); ctx.fill();
+    ctx.fillStyle = hsl(o.g.hue, 95, o.g.carn ? 62 : 63, 1);
+    ctx.beginPath(); ctx.arc(x, y, r, 0, 6.283); ctx.fill();
+  }
+  ctx.globalCompositeOperation = "source-over";
+  for (const o of w.organisms) if (o.g.carn) {
+    ctx.strokeStyle = "rgba(255,227,240,.85)"; ctx.lineWidth = 1.4 * SCALE;
+    ctx.beginPath(); ctx.arc(o.x * SCALE, o.y * SCALE, o.g.size * 1.05 * SCALE, 0, 6.283); ctx.stroke();
+  }
+
+  for (let i = pings.length - 1; i >= 0; i--) {
+    const p = pings[i]; p.t += 1 / 50;
+    if (p.t >= 1) { pings.splice(i, 1); continue; }
+    ctx.strokeStyle = p.c; ctx.globalAlpha = 1 - p.t; ctx.lineWidth = 2 * SCALE;
+    ctx.beginPath(); ctx.arc(p.x * SCALE, p.y * SCALE, (6 + p.t * p.r) * SCALE, 0, 6.283); ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+
+  // inspector
+  const tip = $("tip");
+  if (hover) {
+    let best = 22, o = null;
+    for (const c of w.organisms) { const d = Math.hypot(c.x - hover.x, c.y - hover.y); if (d < best) { best = d; o = c; } }
+    if (o) {
+      const L = w.lineages[o.lin] || { name: o.lin };
+      ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 1.2 * SCALE;
+      ctx.beginPath(); ctx.arc(o.x * SCALE, o.y * SCALE, (o.g.size * 1.05 + 5) * SCALE, 0, 6.283); ctx.stroke();
+      ctx.strokeStyle = "rgba(255,255,255,.18)";
+      ctx.beginPath(); ctx.arc(o.x * SCALE, o.y * SCALE, o.g.sense * SCALE, 0, 6.283); ctx.stroke();
+      tip.hidden = false;
+      const rect = $("chamber").getBoundingClientRect();
+      tip.style.left = Math.min(hover.px, rect.width - 190) + "px";
+      tip.style.top = Math.min(hover.py, rect.height - 140) + "px";
+      tip.innerHTML = `<div class="t" style="color:${hsl(o.g.hue, 95, 65)}">${o.g.carn ? "APEX" : "FORAGER"} #${o.id}</div>
+        <dl><dt>lineage</dt><dd>${esc(L.name)}</dd><dt>energy</dt><dd>${o.e.toFixed(0)}</dd><dt>age</dt><dd>${o.age}</dd>
+        <dt>speed</dt><dd>${o.g.speed.toFixed(2)}</dd><dt>sense</dt><dd>${o.g.sense.toFixed(0)}</dd><dt>size</dt><dd>${o.g.size.toFixed(2)}</dd>
+        <dt>burn/tick</dt><dd>${S.cost(o.g).toFixed(3)}</dd></dl>`;
+    } else tip.hidden = true;
+  }
+}
+
+function drawChart() {
+  const Wc = ch.width, Hc = ch.height;
+  cx2.clearRect(0, 0, Wc, Hc);
+  cx2.strokeStyle = "rgba(21,48,58,.8)"; cx2.lineWidth = 1;
+  for (let i = 1; i < 4; i++) { cx2.beginPath(); cx2.moveTo(0, Hc * i / 4); cx2.lineTo(Wc, Hc * i / 4); cx2.stroke(); }
+  if (series.length < 2) return;
+  const max = Math.max(40, ...series.map((s) => Math.max(s.h, s.p * 4)));
+  const plot = (fn, col, lw, fill) => {
+    cx2.beginPath();
+    series.forEach((s, i) => { const x = i / (series.length - 1) * Wc, y = Hc - 4 - fn(s) * (Hc - 8); i ? cx2.lineTo(x, y) : cx2.moveTo(x, y); });
+    cx2.strokeStyle = col; cx2.lineWidth = lw; cx2.stroke();
+    if (fill) { cx2.lineTo(Wc, Hc); cx2.lineTo(0, Hc); cx2.closePath(); cx2.fillStyle = fill; cx2.fill(); }
+  };
+  plot((s) => s.h / max, "#3dffa2", 2.5, "rgba(61,255,162,.08)");
+  plot((s) => s.p * 4 / max, "#ff3d9a", 2);
+  plot((s) => Math.min(1, s.s / 3.4), "#ffb347", 1.6);
+}
+
+function panels() {
+  const st = S.stats(w);
+  $("s-herb").textContent = st.herbivores; $("s-pred").textContent = st.predators; $("s-lin").textContent = st.lineages;
+  $("s-speed").textContent = st.speed.toFixed(2); $("s-sense").textContent = st.sense.toFixed(0); $("s-size").textContent = st.size.toFixed(2);
+  $("h-tick").textContent = w.tick.toLocaleString("en-US"); $("h-fert").textContent = w.climate.fertility.toFixed(2);
+  $("h-mut").textContent = Math.round(w.climate.mutation * 100) + "%"; $("h-food").textContent = st.food;
+  $("h-epoch").textContent = "E" + String(w.epoch).padStart(3, "0");
+  const census = S.census(w);
+  $("lin").innerHTML = Object.entries(w.lineages)
+    .map(([id, L]) => ({ id, L, n: census[id] || 0 }))
+    .sort((a, b) => b.n - a.n).slice(0, 9)
+    .map(({ L, n }) => `<div class="${n ? "" : "dead"}"><i style="background:${hsl(L.hue, 95, 62)}${L.carn ? ";box-shadow:0 0 0 2px #ffe3f0 inset" : ""}"></i><span class="n">${esc(L.name)}${L.founder !== "primordial" && L.founder !== "abiogenesis" ? ` <span style="color:var(--dim)">@${esc(L.founder)}</span>` : ""}</span><b>${n || "extinct"}</b></div>`).join("");
+  series.push({ h: st.herbivores, p: st.predators, s: st.speed });
+  if (series.length > 240) series.shift();
+  drawChart();
+}
+
+function esc(s) { return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+let frame = 0, fpsT = performance.now(), fpsN = 0;
+function loop(t) {
+  if (!paused) for (let i = 0; i < speed; i++) S.step(w);
+  draw();
+  if (++frame % 20 === 0) panels();
+  fpsN++; if (t - fpsT > 1000) { $("fps").textContent = `${fpsN} fps · ${w.organisms.length} organisms`; fpsN = 0; fpsT = t; }
+  requestAnimationFrame(loop);
+}
+await boot();
+panels();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
